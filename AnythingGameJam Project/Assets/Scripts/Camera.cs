@@ -1,4 +1,6 @@
+using Unity.VisualScripting;
 using UnityEngine;
+
 
 public class Camera : MonoBehaviour
 {
@@ -8,11 +10,10 @@ public class Camera : MonoBehaviour
     public float Sensi;
     public Transform body;
     public Rigidbody rb;
-     
-
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
+       
     }
     void Update()
     {
@@ -24,6 +25,8 @@ public class Camera : MonoBehaviour
 
         transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
         body.Rotate(Vector3.up * mouseX);
+        
     }
+
 
 }

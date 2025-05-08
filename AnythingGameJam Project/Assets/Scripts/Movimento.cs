@@ -40,9 +40,10 @@ public class Movimento : MonoBehaviour
 
 
     //Bools
-    bool grounded;
-    bool crouchingBool = false;
-    bool isJumping = false;
+    public bool grounded;
+    public bool crouchingBool = false;
+    public bool isRunning = false;
+    public bool isWalking;
     // --------------------
     // Keys
     // --------------------
@@ -92,8 +93,6 @@ public class Movimento : MonoBehaviour
 
             grounded = Physics.Raycast(rayOrigin, rayDirection, out RaycastHit hitInfo, rayDistance);
 
-       
-
         if (grounded) 
         {
             rb.linearDamping = atrito;
@@ -114,12 +113,19 @@ public class Movimento : MonoBehaviour
 
         if (Input.GetKey(runButton) && !crouchingBool)
         {
+
             praticalSpeed *= sprintMulti;
             praticalMaxSpeed *= sprintMulti;
+            isRunning = true;
         }else if (crouchingBool)
         {
             praticalSpeed = speed * 0.5f;
             rb.linearDamping *= 1.5f;
+            isRunning = false;
+        }
+        else
+        {
+            isRunning = false;
         }
 
         // --------------------
@@ -129,7 +135,7 @@ public class Movimento : MonoBehaviour
         if (HorVel.magnitude > praticalMaxSpeed)
         {
             Vector3 limitSpeed = HorVel.normalized * praticalMaxSpeed;
-            rb.linearVelocity = new Vector3(limitSpeed.x , rb.linearVelocity.y, limitSpeed.z);
+            rb.linearVelocity = new Vector3(limitSpeed.x, rb.linearVelocity.y, limitSpeed.z);
         }
 
         //adicionando velocidade
@@ -153,6 +159,11 @@ public class Movimento : MonoBehaviour
 
             rb.linearVelocity = new Vector3(slowed.x, vel.y, slowed.z);
         }
+
+        if (rb.linearVelocity.magnitude > 0.1f)
+            isWalking = true;
+        else
+            isWalking = false;
     }
 
 
@@ -161,6 +172,7 @@ public class Movimento : MonoBehaviour
     {
         crouch();
         jumping();
+        
     }
 
    void crouch()
@@ -185,13 +197,10 @@ public class Movimento : MonoBehaviour
     void jumping()
     {
         if (Input.GetKeyDown(jumpButton) && grounded){
-            isJumping = true;
+           
             rb.AddForce(Vector3.up * JumpPower, ForceMode.VelocityChange);
         }
-        else
-        {
-            isJumping = false;
-        }
+
 
     }
 }
