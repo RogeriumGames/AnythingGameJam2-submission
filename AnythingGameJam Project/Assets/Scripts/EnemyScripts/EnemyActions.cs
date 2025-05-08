@@ -5,6 +5,7 @@ using UnityEngine;
 public class EnemyActions : MonoBehaviour
 {
     public Transform playerT;
+    public Transform playerCameraT;
     public Transform enemyT;
     public Transform enemySP;
     public LookAtPlayer lookScript;
@@ -29,6 +30,8 @@ public class EnemyActions : MonoBehaviour
     float angulo;
     float pAngulos;
     float anguloPraPlayer;
+    public float rayYOffset = 0.9f;
+    public float rayOriginYOffset = 0.5f;
     public float returnSpeed = 45f;
 
 
@@ -47,8 +50,10 @@ public class EnemyActions : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-        pDirection = (playerT.position - transform.position).normalized;
+
+        Vector3 positionOffset = playerCameraT.position;
+        pDirection = (positionOffset - transform.position).normalized;
+
         anguloPraPlayer = Vector3.Angle(transform.forward, pDirection);
 
         distanceX = playerT.position.x - transform.position.x;
@@ -89,16 +94,15 @@ public class EnemyActions : MonoBehaviour
     void enemyIdle()
     {
         playerIsSeen = false;
-        rayOrigin = transform.position;
+        Vector3 rayOrigin = transform.position + new Vector3(0, rayOriginYOffset, 0);
 
-        
         if (Physics.Raycast(rayOrigin, pDirection, out RaycastHit hitInfo, rayDistance))
         {
             
             Debug.DrawRay(rayOrigin, pDirection * rayDistance, Color.red);
             if (anguloPraPlayer <= coneAngle /2 &&
                 distanciaPlana <= rayDistance &&
-                hitInfo.transform == playerT)
+                hitInfo.collider.CompareTag("MainCamera"))
             {
                 playerIsSeen = true;
                 enemyAlert();
