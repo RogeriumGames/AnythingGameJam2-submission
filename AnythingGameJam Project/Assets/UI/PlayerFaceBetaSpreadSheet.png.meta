@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: ad03f7f4441272f47b3a4fbf78a79a3f
+guid: 6794ceb7dbb904642ae5b1b66e08a266
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,13 +97,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: PlayerGamePlayUI_0
+      name: PlayerFaceBetaSpreadSheet_0
       rect:
         serializedVersion: 2
-        x: 124
-        y: 0
-        width: 837
-        height: 204
+        x: 132
+        y: 182
+        width: 248
+        height: 219
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -112,8 +112,74 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3cbbdbdb23024d640a33966a68e70c4b
-      internalID: 258489531
+      spriteID: 95d72911d8db9c24dbd9532f3b0cc935
+      internalID: -993196958
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerFaceBetaSpreadSheet_1
+      rect:
+        serializedVersion: 2
+        x: 644
+        y: 182
+        width: 248
+        height: 219
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 51e5eea5a95b4684f9b8a35044521344
+      internalID: 722526996
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerFaceBetaSpreadSheet_2
+      rect:
+        serializedVersion: 2
+        x: 1156
+        y: 182
+        width: 248
+        height: 219
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b1889397c088acb47aa61bf06cc4e617
+      internalID: -1296776810
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerFaceBetaSpreadSheet_3
+      rect:
+        serializedVersion: 2
+        x: 1668
+        y: 182
+        width: 248
+        height: 219
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 07f6afa67b787d942868b4fa4aa2e49e
+      internalID: 552389537
       vertices: []
       indices: 
       edges: []
@@ -122,7 +188,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: b3f5e8d048ced304baebfe7e14fed796
+    spriteID: ae98ece53a1a38241928495bbb349787
     internalID: 0
     vertices: []
     indices: 
@@ -132,7 +198,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      PlayerGamePlayUI_0: 258489531
+      PlayerFaceBetaSpreadSheet_0: -993196958
+      PlayerFaceBetaSpreadSheet_1: 722526996
+      PlayerFaceBetaSpreadSheet_2: -1296776810
+      PlayerFaceBetaSpreadSheet_3: 552389537
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
