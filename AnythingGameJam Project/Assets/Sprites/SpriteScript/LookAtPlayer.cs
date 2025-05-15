@@ -2,21 +2,45 @@ using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.UIElements;
+using Zenject;
 
 public class LookAtPlayer : MonoBehaviour
 {
-    public EnemyActions enemyActions;
-    public Transform Player;
+    private EnemyActions _enemyActions;
+
+    [Inject]
+    public void Construct(EnemyActions enemyactions)
+    {
+        _enemyActions = enemyactions;
+    }
+
+    private Transform _playerTransform;
+    [Inject]
+    public void Construct(Transform playertransform)
+    {
+        _playerTransform = playertransform;
+    }
+
     public SpriteRenderer spriteRender;
     public Sprite[] sprites;
     public bool canLookVertical;
-    void Update()
-    {
-        float distanceX = Player.transform.position.x - transform.position.x;
-        float distanceZ = Player.transform.position.z - transform.position.z;
+
+        void Update()
+        {
+        if (_playerTransform == null)
+        {
+            Debug.LogError("LookAtPlayer: Dependência _playerTransform é nula!"); 
+            if (_enemyActions == null)
+            {
+                Debug.LogError("_enemyActions é nula");
+            }
+            return;
+        }
+        float distanceX = _playerTransform.position.x - transform.position.x;
+        float distanceZ = _playerTransform.position.z - transform.position.z;
 
         Vector3 forward = transform.parent.forward;
-        Vector3 toPlayer = (Player.position - transform.parent.position).normalized;
+        Vector3 toPlayer = (_playerTransform.position - transform.parent.position).normalized;
         forward.y = 0;
         toPlayer.y = 0;
 
@@ -29,15 +53,15 @@ public class LookAtPlayer : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.G))
         Debug.Log(angulo);
-        if (!enemyActions.playerIsSeen)
+        if (!_enemyActions.playerIsSeen)
         {
             if (canLookVertical)
             {
-                transform.LookAt(Player.transform);
+                transform.LookAt(_playerTransform);
             }
             else
             {
-                Vector3 modifiedTarget = Player.position;
+                Vector3 modifiedTarget = _playerTransform.position;
                 modifiedTarget.y = transform.position.y;
 
                 transform.LookAt(modifiedTarget);
