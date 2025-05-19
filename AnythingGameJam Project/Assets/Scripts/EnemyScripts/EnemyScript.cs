@@ -2,6 +2,7 @@ using System.Runtime.CompilerServices;
 using Unity.Mathematics;
 using UnityEngine;
 using Zenject;
+using Zenject.SpaceFighter;
 
 
 
@@ -10,13 +11,11 @@ public class EnemyActions : MonoBehaviour
 {
     private EnemyHealth _enemyHealth;
 
-    [Inject(Id = "PlayerBody")]
-    public Transform playerT { get; set; }
+    public PlayerStats _playerStats { get; private set; }
 
-    [Inject(Id = "MainCamera")]
-    public Transform playerCameraT { get; set; }
+    public pCamera playerCameraT { get; private set; }
 
-
+    public Transform playerTransform;
 
     private Vector3 enemyStartPosition;
     private Quaternion enemyStartRotation;
@@ -26,7 +25,14 @@ public class EnemyActions : MonoBehaviour
     public float coneAngle;
     public float AlertTimer;
     private float AlertDuration = 3f;
-    public float alertToAttackTimer = 3f;
+
+
+    public float alertToAttackTimer;
+    public float alertToAttackDuration = 3f;
+    private Vector3 currentDirection;
+    private Vector3 targetDirection;
+    public float enemyDamage;
+
 
     Vector3 direction;
     Vector3 pDirection;
@@ -44,13 +50,21 @@ public class EnemyActions : MonoBehaviour
     bool isReturning;
     public bool isAlert = false;
 
-    
+    [Inject]
+    void Construct(PlayerStats _playerstats, EnemyHealth _enemyhealth, pCamera _pCamera)
+    {
+        
+        _enemyHealth = _enemyhealth;
+        playerCameraT = _pCamera;
+        _playerStats = _playerstats;
+    }
+
+
     void Start()
     {
-
-        _enemyHealth = GetComponent<EnemyHealth>();
+        playerTransform = _playerStats.transform;
         enemyStartPosition = transform.position;
-        enemyStartRotation = Quaternion.Euler(0, transform.rotation.y, 0);
+        enemyStartRotation = Quaternion.Euler(0, transform.eulerAngles.y, 0);
     }
 
     // Update is called once per frame
@@ -63,19 +77,20 @@ public class EnemyActions : MonoBehaviour
         }
         if (!_enemyHealth.IsDead)
         {
+            rayOrigin = transform.position + new Vector3(0, rayOriginYOffset, 0);
+            Vector3 positionOffset = playerCameraT.transform.position;
 
-            Vector3 positionOffset = playerCameraT.position;
-            pDirection = (positionOffset - transform.position).normalized;
+            pDirection = (playerTransform.position + Vector3.up * 1.0f - rayOrigin).normalized;
 
             anguloPraPlayer = Vector3.Angle(transform.forward, pDirection);
 
-            distanceX = playerT.position.x - transform.position.x;
-            distanceZ = playerT.position.z - transform.position.z;
+            distanceX = playerTransform.position.x - transform.position.x;
+            distanceZ = playerTransform.position.z - transform.position.z;
 
 
             distanciaPlana = Mathf.Sqrt(distanceX * distanceX + distanceZ * distanceZ);
 
-            direction = playerT.position - transform.position;
+            direction = playerTransform.position - transform.position;
             direction.y = 0;
 
             angulo = Mathf.Atan2(distanceX, distanceZ) * Mathf.Rad2Deg;
@@ -106,20 +121,20 @@ public class EnemyActions : MonoBehaviour
     
     void enemyIdle()
     {
-        playerIsSeen = false;
-        Vector3 rayOrigin = transform.position + new Vector3(0, rayOriginYOffset, 0);
-
         if (Physics.Raycast(rayOrigin, pDirection, out RaycastHit hitInfo, rayDistance))
         {
-            
             Debug.DrawRay(rayOrigin, pDirection * rayDistance, Color.red);
             if (anguloPraPlayer <= coneAngle / 2 &&
                 distanciaPlana <= rayDistance &&
-                (hitInfo.collider.CompareTag("MainCamera") || hitInfo.collider.CompareTag("PlayerBody")))
+                (hitInfo.collider.CompareTag("Player")))
             {
                 playerIsSeen = true;
                 enemyAlert();
                 Debug.Log("player visto, em alerta!");
+            }
+            else
+            {
+                playerIsSeen = false;
             }
         }
         if(!playerIsSeen && isAlert)
@@ -138,14 +153,40 @@ public class EnemyActions : MonoBehaviour
     {
         Debug.Log("alerta!");
         AlertTimer = AlertDuration;
-        transform.rotation = Quaternion.LookRotation(direction);
+        Vector3 lookDirection = playerTransform.position - transform.position;
+        lookDirection.y = 0;
+        if (lookDirection != Vector3.zero)
+            transform.rotation = Quaternion.LookRotation(lookDirection);
         isAlert = true;
         isReturning = false;
+        alertToAttackTimer -= Time.deltaTime;
+        if (alertToAttackTimer <= 0f)
+        {
+            Debug.Log("tempo esgotou");
+            //enemyAttack();
+        }
+        else
+        {
+            alertToAttackTimer = alertToAttackDuration;
+        }
     }
-    void enemyAttack()
+    /*void enemyAttack()
     {
+        Debug.Log("ataque");
+        transform.rotation = Quaternion.LookRotation(direction);
+        targetDirection = (playerT.transform.position - transform.position).normalized;
+        currentDirection = Vector3.RotateTowards(currentDirection, targetDirection, 15 * Time.deltaTime, 0f);
+        transform.rotation = Quaternion.LookRotation(direction);
 
-    }
+        Debug.DrawRay(rayOrigin, targetDirection * rayDistance, Color.blue);
+        if(Physics.Raycast(rayOrigin, direction , out RaycastHit hitInfo, rayDistance) && hitInfo.collider.CompareTag("PlayerBody") || hitInfo.collider.CompareTag("PlayerCamera"))
+        {
+            hitInfo.collider.TryGetComponent<PlayerStats>(out PlayerStats playerStats);
+            playerStats.TakeDamage(enemyDamage);
+        }
+
+    
+    }*/
     void enemySearch()
     {
 

@@ -6,24 +6,21 @@ using Zenject;
 
 public class LookAtPlayer : MonoBehaviour
 {
-    private EnemyActions _enemyActions;
-
     [Inject]
-    public void Construct(EnemyActions enemyactions)
-    {
-        _enemyActions = enemyactions;
-    }
-
-    private Transform _playerTransform;
+    public EnemyActions _enemyActions;
     [Inject]
-    public void Construct(Transform playertransform)
-    {
-        _playerTransform = playertransform;
-    }
+    public PlayerStats _playerTransform;
 
     public SpriteRenderer spriteRender;
     public Sprite[] sprites;
     public bool canLookVertical;
+
+    [Inject]
+    void construct(EnemyActions enemyactions, PlayerStats playerstats)
+    {
+        _enemyActions = enemyactions;
+        _playerTransform = playerstats;
+    }
 
         void Update()
         {
@@ -36,11 +33,11 @@ public class LookAtPlayer : MonoBehaviour
             }
             return;
         }
-        float distanceX = _playerTransform.position.x - transform.position.x;
-        float distanceZ = _playerTransform.position.z - transform.position.z;
+        float distanceX = _playerTransform.transform.position.x - transform.position.x;
+        float distanceZ = _playerTransform.transform.position.z - transform.position.z;
 
         Vector3 forward = transform.parent.forward;
-        Vector3 toPlayer = (_playerTransform.position - transform.parent.position).normalized;
+        Vector3 toPlayer = (_playerTransform.transform.position - transform.parent.position).normalized;
         forward.y = 0;
         toPlayer.y = 0;
 
@@ -57,11 +54,11 @@ public class LookAtPlayer : MonoBehaviour
         {
             if (canLookVertical)
             {
-                transform.LookAt(_playerTransform);
+                transform.LookAt(_playerTransform.transform);
             }
             else
             {
-                Vector3 modifiedTarget = _playerTransform.position;
+                Vector3 modifiedTarget = _playerTransform.transform.position;
                 modifiedTarget.y = transform.position.y;
 
                 transform.LookAt(modifiedTarget);

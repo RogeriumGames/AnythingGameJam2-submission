@@ -23,7 +23,7 @@ public class EnemyHealth : MonoBehaviour, IHealth
     public float RegenSpeed { get => regenSpeed; set => regenSpeed = value; }
 
     float Deathtimer = 3f;
-    public bool IsDead => Health <= 0;
+    public bool IsDead => health <= 0;
 
     public void TakeDamage(float Damage)
     {

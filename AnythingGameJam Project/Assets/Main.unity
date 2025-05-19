@@ -261,8 +261,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 299e133bfdd8bfd47a7e032c40ba5b32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerBodyTag: PlayerBody
-  mainCameraTag: MainCamera
 --- !u!114 &74004893
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -397,7 +395,7 @@ GameObject:
   - component: {fileID: 189362449}
   m_Layer: 0
   m_Name: GameObject
-  m_TagString: PlayerBody
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -868,9 +866,10 @@ GameObject:
   - component: {fileID: 780466171}
   - component: {fileID: 780466172}
   - component: {fileID: 780466173}
+  - component: {fileID: 780466174}
   m_Layer: 0
   m_Name: Player
-  m_TagString: PlayerBody
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1007,6 +1006,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 780466171}
+  capCol: {fileID: 780466168}
   speed: 35
   maxspeed: 15
   atrito: 7
@@ -1014,8 +1014,7 @@ MonoBehaviour:
   JumpPower: 7
   standingHeight: 2
   crouchingHeight: 1
-  cameraStand: 0.5
-  cameraCrouch: 0
+  cameraHolder: {fileID: 691281158}
   grounded: 0
   crouchingBool: 0
   isRunning: 0
@@ -1056,6 +1055,26 @@ MonoBehaviour:
     range: 0
     fireRate: 0
     reloadTime: 0
+--- !u!114 &780466174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 780466166}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fb0dd19fed954e47bd44c7a50e1b5ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 100
+  armor: 0
+  maxHealth: 100
+  maxArmor: 0
+  regen: 0
+  regenSpeed: 0
+  IsDead: 0
+  HasArmor: 0
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1435,6 +1454,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 613f391428b82f6438919a1f72cb64f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _enemyActions: {fileID: 0}
+  _playerTransform: {fileID: 0}
   spriteRender: {fileID: 1553703783}
   sprites:
   - {fileID: -1063866227, guid: 8c702777a023b3b4797ded2fee121dfb, type: 3}
@@ -1503,10 +1524,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30475b4849bab9a44b507f96cc75f658, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerTransform: {fileID: 0}
   rayDistance: 0
   coneAngle: 0
   AlertTimer: 3
   alertToAttackTimer: 3
+  alertToAttackDuration: 3
+  enemyDamage: 0
   rayYOffset: 0.5
   rayOriginYOffset: 0.5
   returnSpeed: 45
@@ -2056,7 +2080,6 @@ GameObject:
   - component: {fileID: 1849465474}
   - component: {fileID: 1849465473}
   - component: {fileID: 1849465472}
-  - component: {fileID: 1849465471}
   - component: {fileID: 1849465476}
   - component: {fileID: 1849465477}
   m_Layer: 0
@@ -2066,27 +2089,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1849465471
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1849465470}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30475b4849bab9a44b507f96cc75f658, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rayDistance: 150
-  coneAngle: 70
-  AlertTimer: 5
-  alertToAttackTimer: 3
-  rayYOffset: 0
-  rayOriginYOffset: 0
-  returnSpeed: 45
-  playerIsSeen: 0
-  isAlert: 0
 --- !u!65 &1849465472
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2190,10 +2192,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30475b4849bab9a44b507f96cc75f658, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerTransform: {fileID: 0}
   rayDistance: 150
   coneAngle: 70
   AlertTimer: 3
   alertToAttackTimer: 3
+  alertToAttackDuration: 3
+  enemyDamage: 0
   rayYOffset: 0.5
   rayOriginYOffset: 0.5
   returnSpeed: 45

@@ -15,18 +15,10 @@ public class Movimento : MonoBehaviour
     // --------------------
 
     public Rigidbody rb;
-    public Transform cameraT { get; set; }
-    private CapsuleCollider capCol;
 
-    [Inject]
-    public void Construct(CapsuleCollider Collider) 
-    { 
-        capCol = Collider;
-    }
+    public pCamera cameraT { get; set; }
 
-
-
-
+    public CapsuleCollider capCol;
 
     // --------------------
     // aqui é relacionado a velocidade de correr, andar, etc
@@ -43,11 +35,10 @@ public class Movimento : MonoBehaviour
     // para agachar
     // --------------------
 
-    public float standingHeight = 2f;
+    public float standingHeight = 1.8f;
     public float crouchingHeight = 1f;
+    public Transform cameraHolder;
 
-    public float cameraStand = 2f;
-    public float cameraCrouch = 1f;
 
 
     //Bools
@@ -61,6 +52,12 @@ public class Movimento : MonoBehaviour
     public KeyCode runButton;
     public KeyCode crouchButton;
     public KeyCode jumpButton;
+
+    [Inject]
+    void Construct(pCamera camera)
+    {
+        cameraT = camera;
+    }
 
     void Start()
     {
@@ -95,11 +92,11 @@ public class Movimento : MonoBehaviour
        
         if (crouchingBool)
         {
-            rayDistance = 0.7f;
+            rayDistance = 0.2f;
         }
         else
         {
-            rayDistance = 1.1f;
+            rayDistance = 0.4f;
         }
 
             grounded = Physics.Raycast(rayOrigin, rayDirection, out RaycastHit hitInfo, rayDistance);
@@ -186,25 +183,28 @@ public class Movimento : MonoBehaviour
         
     }
 
-   void crouch()
+    void crouch()
     {
         if (Input.GetKey(crouchButton))
         {
-            
+
             capCol.height = crouchingHeight;
-            capCol.center = Vector3.zero;
-            cameraT.GetChild(0).localPosition = new Vector3(0, -0.5f, 0);
+            capCol.center = new Vector3(0, crouchingHeight / 2f, 0);
+
+            cameraHolder.localPosition = new Vector3(0, crouchingHeight - 0.1f, 0);
+
             crouchingBool = true;
         }
         else
         {
             capCol.height = standingHeight;
-            capCol.center = Vector3.zero;
-            cameraT.GetChild(0).localPosition = new Vector3(0, 0f, 0);
+            capCol.center = new Vector3(0, standingHeight / 2f, 0);
+
+            cameraHolder.localPosition = new Vector3(0, standingHeight - 0.1f, 0);
+
             crouchingBool = false;
         }
     }
-
     void jumping()
     {
         if (Input.GetKeyDown(jumpButton) && grounded){
