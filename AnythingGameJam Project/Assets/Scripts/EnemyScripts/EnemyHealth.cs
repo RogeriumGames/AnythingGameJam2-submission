@@ -24,6 +24,7 @@ public class EnemyHealth : MonoBehaviour, IHealth
 
     float Deathtimer = 3f;
     public bool IsDead => health <= 0;
+    public event Action onDeath;
 
     public void TakeDamage(float Damage)
     {
@@ -40,7 +41,7 @@ public class EnemyHealth : MonoBehaviour, IHealth
     public void RegenHealth(float Amount, float speed) { }
     public void RegenArmor() { }
 
-    public void OnDeath()
+    public void IsDying()
     {
         if (IsDead)
         {
@@ -48,13 +49,15 @@ public class EnemyHealth : MonoBehaviour, IHealth
             transform.position += new Vector3(0, 1, 0) * Time.deltaTime;
             if (Deathtimer <= 0)
             {
-                GameObject.Destroy(gameObject);
+                Destroy(gameObject);
+                onDeath?.Invoke();     
+                Destroy(this);
             }
         }
     }
     public void Update()
     {
-        OnDeath();
+        IsDying();
     }
 }
 

@@ -9,8 +9,8 @@ public class PlayerInstaller : MonoInstaller
 
         Container.Bind<PlayerStats>().FromComponentInHierarchy().AsSingle();
         Container.Bind<pCamera>().FromComponentInHierarchy().AsSingle();
-        Container.Bind<EnemyActions>().FromComponentInHierarchy().AsSingle();
-        Container.Bind<EnemyHealth>().FromComponentInHierarchy().AsTransient().NonLazy();
+        Container.Bind<EnemyActions>().FromComponentInHierarchy().AsCached();
+        Container.Bind<EnemyHealth>().FromComponentInHierarchy().AsCached().NonLazy();
 
     }
 }

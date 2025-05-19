@@ -17,5 +17,5 @@ public interface IHealth
     void IncreaseMaxArmor(float Amount);
     void DecreaseMaxHealth(float Amount);
     void DecreaseMaxArmor(float Amount);
-    void OnDeath();
+    void IsDying();
 }

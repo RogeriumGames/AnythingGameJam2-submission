@@ -53,15 +53,23 @@ public class EnemyActions : MonoBehaviour
     [Inject]
     void Construct(PlayerStats _playerstats, EnemyHealth _enemyhealth, pCamera _pCamera)
     {
-        
-        _enemyHealth = _enemyhealth;
         playerCameraT = _pCamera;
         _playerStats = _playerstats;
+
     }
 
-
+    private void HandleEnemyDeath()
+    {
+       enabled = false;
+    }
     void Start()
     {
+
+        _enemyHealth = GetComponent<EnemyHealth>();
+
+        if (_enemyHealth != null)
+            _enemyHealth.onDeath += HandleEnemyDeath;
+
         playerTransform = _playerStats.transform;
         enemyStartPosition = transform.position;
         enemyStartRotation = Quaternion.Euler(0, transform.eulerAngles.y, 0);
@@ -73,8 +81,21 @@ public class EnemyActions : MonoBehaviour
         if (_enemyHealth == null)
         {
             Debug.LogError("EnemyActions: _enemyHealth está null!");
+            enabled = false;
             return;
         }
+        if (playerTransform == null)
+            Debug.LogError("playerTransform está null!");
+
+        if (playerCameraT == null)
+            Debug.LogError("playerCameraT está null!");
+
+        if (_playerStats == null)
+            Debug.LogError("_playerStats está null!");
+
+        if (_enemyHealth.IsDead)
+            return;
+
         if (!_enemyHealth.IsDead)
         {
             rayOrigin = transform.position + new Vector3(0, rayOriginYOffset, 0);
@@ -112,9 +133,10 @@ public class EnemyActions : MonoBehaviour
                     Debug.Log("retorno completo");
                 }
             }
-
             enemyIdle();
-
+        }else if (_enemyHealth.IsDead) 
+        {
+            Destroy(gameObject);
         }
 
     }
@@ -184,8 +206,6 @@ public class EnemyActions : MonoBehaviour
             hitInfo.collider.TryGetComponent<PlayerStats>(out PlayerStats playerStats);
             playerStats.TakeDamage(enemyDamage);
         }
-
-    
     }*/
     void enemySearch()
     {
@@ -200,4 +220,9 @@ public class EnemyActions : MonoBehaviour
         Debug.Log("voltando ao estado inicial");
     }
 
+    void OnDestroy()
+    {
+        if (_enemyHealth != null)
+            _enemyHealth.onDeath -= HandleEnemyDeath;
+    }
 }

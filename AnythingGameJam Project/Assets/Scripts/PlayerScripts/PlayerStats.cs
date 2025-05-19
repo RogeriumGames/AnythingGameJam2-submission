@@ -44,7 +44,7 @@ public class PlayerStats : MonoBehaviour, IHealth
     public void IncreaseMaxArmor(float Amount) { }
     public void RegenHealth(float Amount, float speed) { }
     public void RegenArmor() { }
-    public void OnDeath()
+    public void IsDying()
     {
         transform.position += new Vector3(0, 1 * Time.deltaTime, 1);
     }
@@ -60,7 +60,7 @@ public class PlayerStats : MonoBehaviour, IHealth
         IsDead = Health == 0;
         if (IsDead)
         {
-            OnDeath();
+            IsDying();
         }
     }
 }
