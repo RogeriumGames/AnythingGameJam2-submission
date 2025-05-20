@@ -21,8 +21,10 @@ public class Weapon : MonoBehaviour
         public float damage;
         public float range;
         public float fireRate;
+        private float fireRateCooldown = 0f;
         public float reloadTime;
         
+      
         public void shoot()
         {
             Vector3 origin = Weapon.cam.transform.position;
@@ -40,7 +42,14 @@ public class Weapon : MonoBehaviour
                     if (hitInfo.collider.GetComponent<EnemyHealth>() is EnemyHealth enemy)
                     {
                         Debug.Log("atirou e acertou");
-                        enemy.TakeDamage(damage);
+                        if (fireRateCooldown <= 0)
+                        {
+                            fireRateCooldown = fireRate;
+                            enemy.TakeDamage(damage);
+                        }else if (fireRateCooldown >= 0f)
+                        {
+                            fireRateCooldown -= Time.deltaTime;
+                        }
                         break;
                     }
                 }
