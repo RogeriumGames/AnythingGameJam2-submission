@@ -34,12 +34,14 @@ public class PlayerStats : MonoBehaviour, IHealth
     {
         MaxHealth -= Amount;
         Mathf.Clamp(Health, 0, MaxHealth);
+        Mathf.Clamp(health, 0, maxHealth);
     }
     public void DecreaseMaxArmor(float Amount) { }
     public void IncreaseMaxHealth(float Amount) 
     {
         MaxHealth += Amount;
         Mathf.Clamp(Health, 0, MaxHealth);
+        Mathf.Clamp(health, 0, maxHealth);
     }
     public void IncreaseMaxArmor(float Amount) { }
     public void RegenHealth(float Amount, float speed) { }
@@ -51,13 +53,14 @@ public class PlayerStats : MonoBehaviour, IHealth
     void Start()
     {
         Mathf.Clamp(Health, 0, MaxHealth);
+        Mathf.Clamp(health, 0, maxHealth);
     }
 
     // Update is called once per frame
     void Update()
     {
         HasArmor = Armor > 0;
-        IsDead = Health == 0;
+        IsDead = Health <= 0;
         if (IsDead)
         {
             IsDying();

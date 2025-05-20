@@ -15,14 +15,20 @@ public class LookAtPlayer : MonoBehaviour
     public Sprite[] sprites;
     public bool canLookVertical;
 
+    public float ShootTimer;
+    private int shootingSpriteIndex = 8;
     [Inject]
-    void construct(EnemyActions enemyactions, PlayerStats playerstats)
+    void Construct(EnemyActions enemyactions, PlayerStats playerstats)
     {
         _enemyActions = enemyactions;
         _playerTransform = playerstats;
     }
+    private void Start()
+    {
+        ShootTimer = 0;
+    }
 
-        void Update()
+    void Update()
         {
         if (_playerTransform == null)
         {
@@ -46,10 +52,28 @@ public class LookAtPlayer : MonoBehaviour
         if (angulo < 0) angulo += 360;
 
         int spriteAngles = Mathf.FloorToInt((angulo + 22.5f) / 45f) % 8;
-        spriteRender.sprite = sprites[spriteAngles];
 
+        if (ShootTimer > 0f)
+            ShootTimer -= Time.deltaTime;
+
+        if (!_enemyActions.isShooting && ShootTimer <= 0) 
+        {
+            spriteRender.sprite = sprites[spriteAngles];
+        }
+        else
+        {
+            spriteRender.sprite = sprites[shootingSpriteIndex];
+        }
+
+        if (_enemyActions.isShooting)
+        {
+            ShootTimer = _enemyActions.enemyAttackCooldown / 2;
+            shootingSpriteIndex = Random.Range(8, 12);
+        }
+
+       
         if (Input.GetKeyDown(KeyCode.G))
-        Debug.Log(angulo);
+            Debug.Log(angulo);
         if (!_enemyActions.playerIsSeen)
         {
             if (canLookVertical)

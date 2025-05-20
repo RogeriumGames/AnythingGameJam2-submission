@@ -1,4 +1,6 @@
+using System;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using Unity.Mathematics;
 using UnityEngine;
 using Zenject;
@@ -17,6 +19,9 @@ public class EnemyActions : MonoBehaviour
 
     public Transform playerTransform;
 
+    [Inject]
+    public SpriteRenderer _spriteRenderer; 
+
     private Vector3 enemyStartPosition;
     private Quaternion enemyStartRotation;
 
@@ -32,6 +37,8 @@ public class EnemyActions : MonoBehaviour
     private Vector3 currentDirection;
     private Vector3 targetDirection;
     public float enemyDamage;
+    public float enemyAttackCooldown = 3f;
+    public float enemyAttackTimer;
 
 
     Vector3 direction;
@@ -49,6 +56,7 @@ public class EnemyActions : MonoBehaviour
     public bool playerIsSeen;
     bool isReturning;
     public bool isAlert = false;
+    public bool isShooting = false;
 
     [Inject]
     void Construct(PlayerStats _playerstats, EnemyHealth _enemyhealth, pCamera _pCamera)
@@ -64,7 +72,7 @@ public class EnemyActions : MonoBehaviour
     }
     void Start()
     {
-
+        Mathf.Clamp(enemyAttackTimer, 0, enemyAttackCooldown);
         _enemyHealth = GetComponent<EnemyHealth>();
 
         if (_enemyHealth != null)
@@ -178,35 +186,53 @@ public class EnemyActions : MonoBehaviour
         Vector3 lookDirection = playerTransform.position - transform.position;
         lookDirection.y = 0;
         if (lookDirection != Vector3.zero)
-            transform.rotation = Quaternion.LookRotation(lookDirection);
+        transform.rotation = Quaternion.LookRotation(lookDirection);
         isAlert = true;
         isReturning = false;
         alertToAttackTimer -= Time.deltaTime;
+        Mathf.Clamp(alertToAttackTimer, 0, alertToAttackDuration);
+
         if (alertToAttackTimer <= 0f)
         {
             Debug.Log("tempo esgotou");
-            //enemyAttack();
+            enemyAttack();
         }
-        else
+        else if (alertToAttackTimer > 0f && !playerIsSeen)
         {
-            alertToAttackTimer = alertToAttackDuration;
+            alertToAttackTimer += Time.deltaTime;
         }
     }
-    /*void enemyAttack()
+    void enemyAttack()
     {
         Debug.Log("ataque");
-        transform.rotation = Quaternion.LookRotation(direction);
-        targetDirection = (playerT.transform.position - transform.position).normalized;
-        currentDirection = Vector3.RotateTowards(currentDirection, targetDirection, 15 * Time.deltaTime, 0f);
-        transform.rotation = Quaternion.LookRotation(direction);
 
-        Debug.DrawRay(rayOrigin, targetDirection * rayDistance, Color.blue);
-        if(Physics.Raycast(rayOrigin, direction , out RaycastHit hitInfo, rayDistance) && hitInfo.collider.CompareTag("PlayerBody") || hitInfo.collider.CompareTag("PlayerCamera"))
+
+        Vector3 attackDirection = (playerTransform.position - transform.position).normalized;
+
+        transform.rotation = Quaternion.LookRotation(direction);
+        enemyAttackTimer -= Time.deltaTime;
+
+        Debug.DrawRay(rayOrigin, attackDirection * rayDistance, Color.blue);
+        if(Physics.Raycast(rayOrigin, direction , out RaycastHit hitInfo, rayDistance) )
         {
-            hitInfo.collider.TryGetComponent<PlayerStats>(out PlayerStats playerStats);
-            playerStats.TakeDamage(enemyDamage);
+            Debug.Log("raycast foi feito");
+            if (hitInfo.collider.CompareTag("Player"))
+            {
+                Debug.Log("raycast atingiu player");
+                if (enemyAttackTimer <= 0f)
+                {
+                    Debug.Log("atirou");
+                    enemyAttackTimer = enemyAttackCooldown;
+                    isShooting = true;
+                    _playerStats.TakeDamage(enemyDamage);
+                }
+                else
+                {
+                    isShooting = false;
+                }
+            }
         }
-    }*/
+    }
     void enemySearch()
     {
 
