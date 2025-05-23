@@ -81,15 +81,14 @@ public class Movimento : MonoBehaviour
 
         Vector3 Direction = (forward * inZ + right * inX).normalized;
 
-        
+
         // --------------------
         // atrito
         // --------------------
-
         Vector3 rayOrigin = transform.position + Vector3.up * 0.1f;
         Vector3 rayDirection = Vector3.down;
         float rayDistance;
-       
+
         if (crouchingBool)
         {
             rayDistance = 0.2f;
@@ -99,17 +98,17 @@ public class Movimento : MonoBehaviour
             rayDistance = 0.4f;
         }
 
-            grounded = Physics.Raycast(rayOrigin, rayDirection, out RaycastHit hitInfo, rayDistance);
+        grounded = Physics.Raycast(rayOrigin, rayDirection, out RaycastHit hitInfo, rayDistance);
 
         if (grounded) 
         {
             rb.linearDamping = atrito;
         }
-        else
+        else if(!grounded)
         {
             rb.linearDamping = 1f;
         }
-
+        
 
         // --------------------
         // movimentação de correr + agachar
@@ -207,6 +206,7 @@ public class Movimento : MonoBehaviour
     }
     void jumping()
     {
+    
         if (Input.GetKeyDown(jumpButton) && grounded){
            
             rb.AddForce(Vector3.up * JumpPower, ForceMode.VelocityChange);

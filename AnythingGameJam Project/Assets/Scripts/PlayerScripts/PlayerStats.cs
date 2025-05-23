@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerStats : MonoBehaviour, IHealth
 {
@@ -11,8 +12,15 @@ public class PlayerStats : MonoBehaviour, IHealth
     public float maxArmor = 0f;
     public float regen = 0f;
     public float regenSpeed = 0f;
+    public UnityEvent<int> onHealthChanged = new UnityEvent<int>();
+    public float uihealth;
 
-    public float Health { get => health; set => health = value; }
+    public float Health { get => health; set
+        {
+            health = Mathf.Clamp(value, 0, MaxHealth);
+            onHealthChanged.Invoke(Mathf.RoundToInt(health));
+        }
+    }
     public float Armor { get => armor; set => armor = value; }
     public float MaxHealth { get => maxHealth; set => maxHealth = value; }
     public float MaxArmor { get => maxArmor; set => maxArmor = value; }
@@ -25,6 +33,7 @@ public class PlayerStats : MonoBehaviour, IHealth
     public void TakeDamage(float Damage)
     {
         Health -= Damage;
+        onHealthChanged.Invoke(Mathf.RoundToInt(Health));
     }
     public void TakeArmorDamage(float Damage)
     {
@@ -42,6 +51,7 @@ public class PlayerStats : MonoBehaviour, IHealth
         MaxHealth += Amount;
         Mathf.Clamp(Health, 0, MaxHealth);
         Mathf.Clamp(health, 0, maxHealth);
+        onHealthChanged.Invoke(Mathf.RoundToInt(Health));
     }
     public void IncreaseMaxArmor(float Amount) { }
     public void RegenHealth(float Amount, float speed) { }

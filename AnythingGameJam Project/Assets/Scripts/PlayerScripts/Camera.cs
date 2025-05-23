@@ -16,7 +16,7 @@ public class pCamera: MonoBehaviour
     void Update()
     {
         movingCamera();
-        shooting();
+        
         
     }
 
@@ -30,13 +30,6 @@ public class pCamera: MonoBehaviour
 
         transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
         transform.parent.transform.parent.Rotate(Vector3.up * mouseX);
-    }
-    void shooting()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            weapons.StdRifle.shoot();
-        }
     }
 
 

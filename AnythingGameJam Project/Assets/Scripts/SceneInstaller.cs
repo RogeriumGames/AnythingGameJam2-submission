@@ -8,7 +8,9 @@ public class PlayerInstaller : MonoInstaller
     public SpriteRenderer _spriteRenderer;
     public override void InstallBindings()
     {
-
+        Container.Bind<FirstPersonMove>()
+            .FromComponentInHierarchy()
+            .AsSingle();
 
         Container.Bind<PlayerStats>()
             .FromInstance(_PlayerStats)

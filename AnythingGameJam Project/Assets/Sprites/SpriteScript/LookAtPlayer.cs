@@ -6,11 +6,9 @@ using Zenject;
 
 public class LookAtPlayer : MonoBehaviour
 {
-    [Inject]
     public EnemyActions _enemyActions;
     [Inject]
     public PlayerStats _playerTransform;
-
     public SpriteRenderer spriteRender;
     public Sprite[] sprites;
     public bool canLookVertical;
@@ -18,14 +16,15 @@ public class LookAtPlayer : MonoBehaviour
     public float ShootTimer;
     private int shootingSpriteIndex = 8;
     [Inject]
-    void Construct(EnemyActions enemyactions, PlayerStats playerstats)
+    void Construct( PlayerStats playerstats)
     {
-        _enemyActions = enemyactions;
         _playerTransform = playerstats;
     }
     private void Start()
     {
+        _enemyActions = GetComponentInParent<EnemyActions>();
         ShootTimer = 0;
+        shootingSpriteIndex = 8;
     }
 
     void Update()
@@ -56,24 +55,26 @@ public class LookAtPlayer : MonoBehaviour
         if (ShootTimer > 0f)
             ShootTimer -= Time.deltaTime;
 
-        if (!_enemyActions.isShooting && ShootTimer <= 0) 
-        {
-            spriteRender.sprite = sprites[spriteAngles];
-        }
-        else
-        {
-            spriteRender.sprite = sprites[shootingSpriteIndex];
-        }
-
         if (_enemyActions.isShooting)
         {
             ShootTimer = _enemyActions.enemyAttackCooldown / 2;
-            shootingSpriteIndex = Random.Range(8, 12);
+            
         }
 
-       
+        if (ShootTimer > 0f)
+        {
+            ShootTimer -= Time.deltaTime;
+            spriteRender.sprite = sprites[shootingSpriteIndex];
+        }
+        else
+        {
+            spriteRender.sprite = sprites[spriteAngles];
+        }
+
+
         if (Input.GetKeyDown(KeyCode.G))
             Debug.Log(angulo);
+
         if (!_enemyActions.playerIsSeen)
         {
             if (canLookVertical)

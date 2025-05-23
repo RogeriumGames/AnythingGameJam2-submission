@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class FirstPersonMove : MonoBehaviour
 {
@@ -8,9 +10,20 @@ public class FirstPersonMove : MonoBehaviour
     private float bobTimer = 0f;
     public float bobFrequency = 5f;
     public float bobAmplitude = 0.05f;
-
+   
+    public UnityEngine.UI.Image gunUIImage;
+    public Sprite idleSprite;
+    public Sprite shootSprite;
+    private bool isShooting = false;
+    private float cooldown;
+    private float cooldownTime;
+    private float shootSpriteDuration = 0.1f; // Tempo visível do sprite de tiro
+    private float shootSpriteTimer = 0f;
+    public Weapon weapon;
+    
     void Start()
     {
+        cooldownTime = 1f;
         initialPosition = transform.position;
     }
     void Update()
@@ -39,7 +52,26 @@ public class FirstPersonMove : MonoBehaviour
             }
             transform.position = initialPosition + new Vector3(0, offsetY, 0);
         }
-        
-    }
+        if (Input.GetMouseButtonDown(0) && weapon.StdRifle.fireRateCooldown <= 0)
+        {
+            weapon.StdRifle.shoot();
+            gunUIImage.sprite = shootSprite;
+            isShooting = true;
+            shootSpriteTimer = shootSpriteDuration;
+        }
 
+        // Atualiza o timer do sprite de tiro
+        if (isShooting)
+        {
+            shootSpriteTimer -= Time.deltaTime;
+
+            if (shootSpriteTimer <= 0f)
+            {
+                gunUIImage.sprite = idleSprite;
+                isShooting = false;
+            }
+        }
+    }
 }
+
+
